@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # FastAPI Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PLAID_CLIENT_ID=sandbox
+      - PLAID_SECRET=sandbox
+      - PLAID_ENV=sandbox
+    volumes:
+      - ./chroma_db:/app/chroma_db
+    depends_on:
+      - ollama
+    networks:
+      - loan-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Ollama LLM Service
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - loan-network
+    command: serve
+    # Note: You'll need to run `ollama pull mistral` and `ollama pull nomic-embed-text` separately
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - loan-network
+
+networks:
+  loan-network:
+    driver: bridge
+
+volumes:
+  ollama_data:
