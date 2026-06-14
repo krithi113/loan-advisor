@@ -12,8 +12,10 @@ import os
 from datetime import datetime
 
 # LLM & RAG
-from langchain_ollama import ChatOllama
-from langchain_ollama.embeddings import OllamaEmbeddings
+# from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
+# from langchain_ollama.embeddings import OllamaEmbeddings
+from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.tools import tool
 from langchain.agents import create_agent
@@ -37,16 +39,30 @@ app.add_middleware(
 # ============ CONFIGURATION ============
 
 # Ollama LLM (runs locally)
-LLM = ChatOllama(
-    model="llama3.2:1b ",  # or llama2, neural-chat, etc
-    base_url="http://localhost:11434",
+# LLM = ChatOllama(
+#     model="llama3.2:1b ",  # or llama2, neural-chat, etc
+#     base_url="http://localhost:11434",
+#     temperature=0.3,
+# )
+
+# # Embeddings
+# EMBEDDINGS = OllamaEmbeddings(
+#     model="nomic-embed-text",
+#     base_url="http://localhost:11434",
+# )
+
+LLM = ChatOpenAI(
+    model=os.getenv("OPENAI_DEPLOYMENT"),
+    base_url=os.getenv("OPENAI_ENDPOINT"),
+    api_key=os.getenv("OPENAI_KEY"),
+
     temperature=0.3,
 )
 
-# Embeddings
-EMBEDDINGS = OllamaEmbeddings(
-    model="nomic-embed-text",
-    base_url="http://localhost:11434",
+EMBEDDINGS = OpenAIEmbeddings(
+    model=os.getenv("OPENAI_EMBEDDINGS_DEPLOYMENT"),
+    base_url=os.getenv("OPENAI_ENDPOINT"),
+    api_key=os.getenv("OPENAI_KEY"),
 )
 
 # Plaid Configuration
