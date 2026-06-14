@@ -52,6 +52,9 @@ test_*.py
 .vscode/
 .idea/
 *.swp
+.claude/
+
+
 
 # OS
 .DS_Store
