@@ -1,4 +1,5 @@
-import { useState, ChangeEvent, FormEvent } from 'react'
+import { useState } from 'react'
+import type { ChangeEvent, FormEvent } from 'react';
 import axios, { AxiosError } from 'axios';
 // import reactLogo from './assets/react.svg'
 // import viteLogo from './assets/vite.svg'
